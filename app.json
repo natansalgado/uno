@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "uno",
-    "slug": "uno",
+    "slug": "UNO",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/uno-logo2.png",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/uno-logo.png",
       "resizeMode": "contain",
