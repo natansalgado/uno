@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "uno",
-    "slug": "UNO",
+    "name": "UNO",
+    "slug": "uno",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/uno-logo2.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/uno-logo.png",
       "resizeMode": "contain",
@@ -19,12 +19,19 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/uno-logo2.png",
+        "backgroundColor": "#000000"
+      },
+      "package": "com.natansalgado.uno"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "owner": "natansalgado",
+    "extra": {
+      "eas": {
+        "projectId": "5b4e1dbe-4812-48a5-a879-6be29303eebc"
+      }
     }
   }
 }

@@ -58,7 +58,7 @@ export const CardsProvider = ({ children }: Props) => {
 
     useEffect(() => {
         if (drawDeck.length <= 0) setWinner("ACABOU AS CARTAS DE COMPRA!");
-    }, [drawDeck])
+    }, [drawDeck, playerDeck, enemyDeck, playerTurn, tableDeck, choosingColor, canDraw, playedCard, drewCard, isDrawing, winner])
 
     useEffect(() => {
         startGame();

@@ -109,10 +109,10 @@ export async function playEnemyCard(
                 card.color = chooseEnemyColor(updatedEnemyDeck);
             }
 
-            isEnemyPlaying = false;
 
             checkIfPlayAgain(false, card, setPlayerTurn);
 
+            isEnemyPlaying = false;
             return;
         }
     }
@@ -173,12 +173,12 @@ function checkIfPlayAgain(isPlayer: boolean, card: Card, setPlayerTurn: SetBool)
         case "+2":
         case "invert":
         case "block":
-            setPlayerTurn(true);
+            setPlayerTurn(true)
             !isPlayer && setPlayerTurn(false);
-            return true;
+            break;
         default:
             isPlayer ? setPlayerTurn(false) : setPlayerTurn(true);
-            return false;
+            break;
     }
 }
 
@@ -200,19 +200,15 @@ async function drawCards(
     for (let i = 0; i < quantity; i++) {
         await new Promise(resolve => setTimeout(resolve, 400));
 
-        const randomNum = Math.floor(Math.random() * drawDeck.length);
+        const randomNum = Math.floor(Math.random() * updatedDrawDeck.length);
         const drewCard = updatedDrawDeck[randomNum];
 
-        if (drewCard === undefined) isEnemyPlaying = true;
+        updatedDrawDeck.splice(randomNum, 1);
+        setDrewCard({ isPlayer });
 
-        if (drewCard !== undefined) {
-            updatedDrawDeck.splice(randomNum, 1);
-            setDrewCard({ isPlayer });
-
-            await new Promise(resolve => setTimeout(resolve, 450));
-            setDrawDeck(updatedDrawDeck);
-            updatedDeck.push(drewCard);
-        };
+        await new Promise(resolve => setTimeout(resolve, 450));
+        setDrawDeck(updatedDrawDeck);
+        updatedDeck.push(drewCard);
 
         setDrewCard(null);
         setDeck(updatedDeck);
@@ -306,7 +302,7 @@ export function shuffleDrawDeck(
     const allCards = JSON.parse(JSON.stringify(cards));
     const updatedDrawDeck = [];
 
-    for (let i = 0; i < allCards.length; i++) {
+    for (let i = 0; i < 68; i++) {
         const randomNum = Math.floor(Math.random() * allCards.length);
         updatedDrawDeck.push(allCards[randomNum]);
         allCards.splice(randomNum, 1);
