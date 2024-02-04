@@ -78,6 +78,8 @@ export async function playEnemyCard(
 
     isEnemyPlaying = true;
 
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
     const tableCard = getLastCardInTable(tableDeck);
     const updatedEnemyDeck = [...enemyDeck]
 
@@ -223,7 +225,7 @@ export async function playerDraw(
     setPlayerDeck: SetDeck,
     tableDeck: Card[],
     setPlayerTurn: SetBool,
-    setDrewCard: SetDrewCard
+    setDrewCard: SetDrewCard,
 ) {
     if (drawDeck.length <= 0) return;
 
@@ -272,18 +274,16 @@ export async function enemyDraw(
 
     await new Promise(resolve => setTimeout(resolve, 450));
 
-    if (drewCard !== undefined) {
-        updatedEnemyDeck.push(drewCard);
-        updatedDrawDeck.splice(randomNum, 1);
+    updatedEnemyDeck.push(drewCard);
+    updatedDrawDeck.splice(randomNum, 1);
 
-        setEnemyDeck(updatedEnemyDeck);
+    setEnemyDeck(updatedEnemyDeck);
 
-        if (canPlay(drewCard, tableDeck)) {
-            setPlayerTurn(true);
-            setPlayerTurn(false);
-        } else {
-            setPlayerTurn(true);
-        }
+    if (canPlay(drewCard, tableDeck)) {
+        setPlayerTurn(true);
+        setPlayerTurn(false);
+    } else {
+        setPlayerTurn(true);
     }
 
     setDrawDeck(updatedDrawDeck);
@@ -365,7 +365,7 @@ export function canPlay(card: Card, tableDeck: Card[], playerPlayedCard?: Card |
 }
 
 export function canDraw(tableDeck: Card[], playerDeck: Card[], playerPlayedCard: Card | null, isDrawing: boolean, choosingColor: boolean) {
-    if (tableDeck.length <= 0 || playerPlayedCard || isDrawing || choosingColor) return false;
+    if (tableDeck.length <= 0 || playerPlayedCard || isDrawing || choosingColor || isEnemyPlaying) return false;
 
     let needToReturn = false;
 

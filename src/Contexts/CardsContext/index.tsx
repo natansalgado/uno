@@ -32,20 +32,14 @@ export const CardsProvider = ({ children }: Props) => {
     }
 
     function enemyPlay() {
-        setTimeout(() => {
-            actions.playEnemyCard(enemyDeck, setEnemyDeck, tableDeck, setTableDeck, setPlayerTurn, drawDeck, setDrawDeck, setIsDrawing, setPlayedCard, playerDeck, setPlayerDeck, setDrewCard)
-        }, 2000)
+        actions.playEnemyCard(enemyDeck, setEnemyDeck, tableDeck, setTableDeck, setPlayerTurn, drawDeck, setDrawDeck, setIsDrawing, setPlayedCard, playerDeck, setPlayerDeck, setDrewCard)
     }
 
     useEffect(() => {
-        if (playerDeck.length > 0 && !playerTurn && !choosingColor && !isDrawing && !drewCard) {
+        if (enemyDeck.length > 0, playerDeck.length > 0 && !playerTurn && !choosingColor && !isDrawing) {
             enemyPlay();
         }
-    }, [playerTurn, playerDeck, choosingColor, isDrawing, drewCard])
-
-    useEffect(() => {
-        setCanDraw(actions.canDraw(tableDeck, playerDeck, playedCard, isDrawing, choosingColor) && playerTurn);
-    }, [tableDeck, playerDeck, enemyDeck, playedCard, isDrawing, playerTurn, choosingColor])
+    }, [playerTurn, choosingColor, isDrawing])
 
     useEffect(() => {
         setTimeout(() => {
@@ -55,6 +49,10 @@ export const CardsProvider = ({ children }: Props) => {
             }
         }, 1000)
     }, [playerDeck, enemyDeck, tableDeck])
+
+    useEffect(() => {
+        setCanDraw(actions.canDraw(tableDeck, playerDeck, playedCard, isDrawing, choosingColor) && playerTurn && !isDrawing && !drewCard);
+    }, [playerTurn, isDrawing, choosingColor, drewCard, playedCard]);
 
     useEffect(() => {
         if (drawDeck.length <= 0) setWinner("ACABOU AS CARTAS DE COMPRA!");

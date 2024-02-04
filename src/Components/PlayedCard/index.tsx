@@ -16,7 +16,7 @@ export const PlayedCard = ({ cardValue, cardColor, isPlayer }: Props) => {
   useEffect(() => {
     Animated.timing(translateY, {
       toValue: 1,
-      duration: 500,
+      duration: 450,
       useNativeDriver: true,
     }).start();
   }, []);

@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         padding: 10,
-        paddingVertical: 28
+        paddingVertical: 40
     },
     text: {
         position: 'absolute',
@@ -26,13 +26,12 @@ export const styles = StyleSheet.create({
     },
     rotatingCircle: {
         position: 'absolute',
-        top: 64,
-        textAlign: 'center',
+        top: 78,
         borderWidth: 2,
         borderColor: '#fff',
         borderRadius: 8,
         backgroundColor: '#000',
         zIndex: 3,
-        padding: 16
+        padding: 10
     }
 });

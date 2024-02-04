@@ -27,8 +27,8 @@ export const styles = StyleSheet.create({
         gap: 20
     },
     square: {
-        height: 100,
-        width: 100,
+        height: 120,
+        width: 120,
         borderWidth: 4,
         borderColor: '#fff',
         borderRadius: 8
