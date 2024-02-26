@@ -15,7 +15,6 @@ export function MainMenu({ navigation }: MainMenuProps) {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>UNO</Text> */}
       <Image source={logo} style={styles.image} />
       <TouchableOpacity
         style={styles.button}

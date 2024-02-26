@@ -1,8 +1,10 @@
-import cards from '../../api/cards.json';
+import { Dispatch, SetStateAction } from 'react';
+import cards from '../../constants/cards.json';
 import { Card, DrewCard, SetDrewCard } from "./types";
 import { SetBool, SetCard, SetDeck } from './types';
 
 let isPlayerChoosing = false;
+let toBuy = 0;
 
 export async function playPlayerCard(
     card: Card,
@@ -42,6 +44,8 @@ export async function playPlayerCard(
 
     setTableDeck(updatedTableDeck);
     setPlayerPlayedCard(null);
+
+    if (checkIfHasDrawCard(card, enemyDeck, setPlayerTurn, true)) return;
 
     if (card.value === '+4') {
         await drawCards(enemyDeck, setEnemyDeck, drawDeck, setDrawDeck, setDrewCard, setIsDrawing, 4, false);
@@ -86,7 +90,10 @@ export async function playEnemyCard(
     for (let i = 0; i < enemyDeck.length; i++) {
         const card: Card = enemyDeck[i];
 
-        if (card.value === tableCard.value || card.color === tableCard.color || card.color === 'black') {
+        if (toBuy ?
+            (card.value == '+4' || (card.value == '+2' && (card.color == card.color || card.value == card.value))) :
+            (card.value === tableCard.value || card.color === tableCard.color || card.color === 'black')) {
+
             updatedEnemyDeck.splice(i, 1);
 
             setEnemyDeck(updatedEnemyDeck);
@@ -98,6 +105,8 @@ export async function playEnemyCard(
             setPlayedEnemyCard(null);
 
             if (updatedEnemyDeck.length <= 0) return;
+
+            if (checkIfHasDrawCard(card, playerDeck, setPlayerTurn, false)) return;
 
             if (card.value === '+4') {
                 await drawCards(playerDeck, setPlayerDeck, drawDeck, setDrawDeck, setDrewCard, setIsDrawing, 4, true);
@@ -111,10 +120,10 @@ export async function playEnemyCard(
                 card.color = chooseEnemyColor(updatedEnemyDeck);
             }
 
-
             checkIfPlayAgain(false, card, setPlayerTurn);
 
             isEnemyPlaying = false;
+
             return;
         }
     }
@@ -122,6 +131,31 @@ export async function playEnemyCard(
     isEnemyPlaying = false;
 
     await enemyDraw(drawDeck, setDrawDeck, updatedEnemyDeck, setEnemyDeck, tableDeck, setPlayerTurn, setDrewCard);
+}
+
+function checkIfHasDrawCard(card: Card, cards: Card[], setPlayerTurn: Dispatch<SetStateAction<boolean>>, isPlayerTurn: boolean) {
+    if (card.value === '+4' || card.value === '+2') {
+        toBuy += Number(card.value.replace('+', ''));
+
+        for (let i = 0; i < cards.length; i++) {
+            const currentCard = cards[i];
+
+            if (currentCard.value == '+4' || (currentCard.value == '+2' && (currentCard.color == card.color || currentCard.value == card.value))) {
+
+                if (isPlayerTurn) {
+                    isPlayerChoosing = false;
+                    setPlayerTurn(false);
+                } else {
+                    isEnemyPlaying = false;
+                    setPlayerTurn(true);
+                }
+
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 export function playerChooseColor(color: string, tableDeck: Card[], setChoosingColor: SetBool) {
@@ -199,7 +233,9 @@ async function drawCards(
 
     setIsDrawing(true);
 
-    for (let i = 0; i < quantity; i++) {
+    const rightQuantity = toBuy ? toBuy : quantity;
+
+    for (let i = 0; i < rightQuantity; i++) {
         await new Promise(resolve => setTimeout(resolve, 400));
 
         const randomNum = Math.floor(Math.random() * updatedDrawDeck.length);
@@ -216,6 +252,7 @@ async function drawCards(
         setDeck(updatedDeck);
     }
 
+    toBuy = 0;
     setIsDrawing(false);
 }
 
@@ -298,6 +335,8 @@ export function shuffleDrawDeck(
     setPlayerTurn: SetBool
 ) {
     isEnemyPlaying = false;
+    isPlayerChoosing = false;
+    toBuy = 0;
 
     const allCards = JSON.parse(JSON.stringify(cards));
     const updatedDrawDeck = [];
@@ -315,15 +354,15 @@ export function shuffleDrawDeck(
 }
 
 export function givePlayerCards(updatedDrawDeck: Card[], setDrawDeck: SetDeck, setPlayerDeck: SetDeck, setEnemyDeck: SetDeck) {
-    let updatedPlayerCards: Card[] = [];
+    let updatedPlayerDeck: Card[] = [];
 
     for (let i = 0; i < 7; i++) {
         const randomNum = Math.floor(Math.random() * updatedDrawDeck.length);
-        updatedPlayerCards.push(updatedDrawDeck[randomNum]);
+        updatedPlayerDeck.push(updatedDrawDeck[randomNum]);
         updatedDrawDeck.splice(randomNum, 1);
     }
 
-    setPlayerDeck(updatedPlayerCards);
+    setPlayerDeck(updatedPlayerDeck);
     giveEnemyCards(updatedDrawDeck, setDrawDeck, setEnemyDeck);
 }
 
@@ -345,15 +384,16 @@ export function getLastCardInTable(tableDeck: Card[]) {
 }
 
 export function canPlay(card: Card, tableDeck: Card[], playerPlayedCard?: Card | null, drewCard?: DrewCard | null, isDrawing?: boolean) {
+    const cardInTable = getLastCardInTable(tableDeck);
+
+    if (toBuy && !isDrawing) {
+        if (card.value == '+4' || (card.value == '+2' && (card.value == cardInTable.value || card.color == cardInTable.color))) return true;
+        else return false;
+    }
+
     if (playerPlayedCard || drewCard || isDrawing) return false;
 
     if (tableDeck && tableDeck.length <= 0) return true;
-
-    const cardInTable = getLastCardInTable(tableDeck);
-
-    if (cardInTable.color === 'black' && cardInTable.value === '+4') return false;
-
-    if (!cardInTable) return false;
 
     if (card.color === 'black') return true;
 
